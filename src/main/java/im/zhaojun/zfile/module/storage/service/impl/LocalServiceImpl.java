@@ -4,6 +4,7 @@ import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.PageUtil;
 import cn.hutool.core.util.StrUtil;
 import im.zhaojun.zfile.core.constant.ZFileConstant;
 import im.zhaojun.zfile.core.exception.file.init.InitializeStorageSourceException;
@@ -35,6 +36,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -61,11 +63,11 @@ public class LocalServiceImpl extends AbstractProxyTransferService<LocalParam> {
     }
 
 
+
     @Override
     public List<FileItemResult> fileList(String folderPath) throws FileNotFoundException {
         checkPathSecurity(folderPath);
 
-        List<FileItemResult> fileItemList = new ArrayList<>();
 
         String fullPath = StringUtils.concat(param.getFilePath() + folderPath);
 
@@ -77,15 +79,21 @@ public class LocalServiceImpl extends AbstractProxyTransferService<LocalParam> {
 
         File[] files = file.listFiles();
 
+
         if (files == null) {
-            return fileItemList;
+            return Collections.emptyList();
         }
+
+        List<FileItemResult> fileItemList = new ArrayList<>(files.length);
+
         for (File f : files) {
             fileItemList.add(fileToFileItem(f, folderPath));
         }
 
         return fileItemList;
     }
+
+
 
 
     @Override
